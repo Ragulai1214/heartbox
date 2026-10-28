@@ -19,6 +19,8 @@
 
 ## 公開
 
-GitHub Pagesでは `main` ブランチのルートを公開元にします。公開先リポジトリは未設定です。
+リポジトリ: https://github.com/Ragulai1214/heartbox
+
+GitHub Pagesでは `main` ブランチのルートを公開元にします。Pagesの公開設定と公開URLでの動作確認は別途必要です。
 
 試合の保存機能はありません。ページの再読み込みでホームに戻ります。
