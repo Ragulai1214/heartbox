@@ -42,28 +42,28 @@ test('target ends on either step, including shield scoring for defender', () => 
     assert.equal(s.history.length, 1); assert.throws(() => advance(s));
   }
 });
-test('10 turns means 20 attacks and consistent attacker order', () => {
+test('15 turns means 30 attacks and consistent attacker order', () => {
   for (const first of [0, 1]) {
     const s = attackState(first);
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
       assert.equal(s.turn, Math.floor(i / 2) + 1); assert.equal(s.step, i % 2);
       assert.equal(attackerOf(s), i % 2 === 0 ? first : 1 - first);
       const [heart, shield, picked] = s.boxesAlive;
       s.phase = Phase.ATTACK; resolveAttack(s, { heart, shield }, picked);
-      assert.equal(Boolean(s.result), i === 19); advance(s, true);
+      assert.equal(Boolean(s.result), i === 29); advance(s, true);
     }
-    assert.equal(s.result.winner, null); assert.equal(s.result.reason, 'draw'); assert.equal(s.history.length, 20);
+    assert.equal(s.result.winner, null); assert.equal(s.result.reason, 'draw'); assert.equal(s.history.length, 30);
   }
 });
 test('final score, reached turn, same turn and zero ties', () => {
   for (const [scores, reachedTurn, winner, reason] of [ [[30, 28], [9, 10], 0, 'score'], [[20, 20], [7, 9], 0, 'earlier'], [[20, 20], [9, 7], 1, 'earlier'], [[20, 20], [7, 7], null, 'draw'], [[0, 0], [0, 0], null, 'draw'] ]) {
-    const s = Object.assign(attackState(), { turn: 10, step: 1, scores, reachedTurn });
+    const s = Object.assign(attackState(), { turn: 15, step: 1, scores, reachedTurn });
     assert.equal(evaluateResult(s).winner, winner); assert.equal(evaluateResult(s).reason, reason);
   }
-  const s = Object.assign(attackState(), { turn: 10, scores: [16, 14], reachedTurn: [8, 9] });
+  const s = Object.assign(attackState(), { turn: 15, scores: [16, 14], reachedTurn: [8, 9] });
   resolveAttack(s, { heart: 4, shield: 6 }, 4); advance(s); s.phase = Phase.ATTACK;
   resolveAttack(s, { heart: 6, shield: 8 }, 6);
-  assert.deepEqual(s.scores, [20, 20]); assert.deepEqual(s.reachedTurn, [10, 10]); assert.equal(s.result.winner, null);
+  assert.deepEqual(s.scores, [20, 20]); assert.deepEqual(s.reachedTurn, [15, 15]); assert.equal(s.result.winner, null);
 });
 test('placement rejects duplicates and invalid boxes; supports moving and swapping', () => {
   const boxes = emptyPlacement(BOX_VALUES);
@@ -96,7 +96,7 @@ test('flow works with both CPU and local handoffs and never passes current place
     const player = { async choosePlacement(view) { assert.ok(!('heart' in view)); return { heart: view.boxesAlive[0], shield: view.boxesAlive[1] }; }, async chooseAttack(view) { assert.ok(!('placement' in view)); return view.boxesAlive[2]; } };
     const ui = { status() {}, conceal() {}, async ready() { readyCount++; }, async handoff() { handoffCount++; }, async reveal() { reveals++; } };
     const s = await playGame({ players: [player, player], ui, local, random: () => 0 });
-    assert.equal(s.phase, Phase.RESULT); assert.equal(reveals, 20); assert.equal(readyCount, local ? 20 : 0); assert.equal(handoffCount, local ? 20 : 0);
+    assert.equal(s.phase, Phase.RESULT); assert.equal(reveals, 30); assert.equal(readyCount, local ? 30 : 0); assert.equal(handoffCount, local ? 30 : 0);
   }
 });
 test('5000 reproducible random games preserve invariants', async t => {
@@ -115,7 +115,7 @@ test('5000 reproducible random games preserve invariants', async t => {
       const before = [...s.scores]; s.phase = Phase.ATTACK;
       resolveAttack(s, p, picked); attacks++;
       assert.ok(s.scores.every((score, i) => score >= before[i])); assert.equal(s.history.length, attacks);
-      advance(s); assert.ok(attacks <= 20);
+      advance(s); assert.ok(attacks <= 30);
     }
     stats[s.result.reason === 'target' ? 'target' : 'limit']++;
     if (s.result.winner === null) stats.draws++;

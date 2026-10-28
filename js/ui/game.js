@@ -1,4 +1,4 @@
-import { Content } from '../core/constants.js';
+import { Content, MAX_TURNS } from '../core/constants.js';
 import { attackerOf } from '../core/gameState.js';
 import { emptyPlacement, placeFromButton, swapBoxes, canConfirm, placementChoice } from '../core/placement.js';
 import { handoff } from './handoff.js';
@@ -32,7 +32,7 @@ export class GameUI {
   constructor(mode) { this.mode = mode; this.state = null; }
   status(state) {
     this.state = state;
-    el('turn').textContent = `${state.turn} / 10 ターン目 · ${state.step + 1}回目`;
+    el('turn').textContent = `${state.turn} / ${MAX_TURNS} ターン目 · ${state.step + 1}回目`;
     const attacker = attackerOf(state);
     el('roles').textContent = `攻：${nameOf(attacker)}　守：${nameOf(1 - attacker)}`;
     drawScores(el('scores'), state.scores, this.mode === 'cpu');
