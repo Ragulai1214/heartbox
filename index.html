@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ja">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f6f3ec"><title>HEART BOX</title><link rel="stylesheet" href="./css/style.css"></head>
+<body>
+<main>
+  <section id="home" class="screen home">
+    <p class="eyebrow">ふたりの、読み合い。</p><h1>HEART<br><span>BOX</span><i aria-hidden="true">♥</i></h1>
+    <p class="intro">ハートを狙うか。シールドを読むか。</p>
+    <div class="home-boxes" aria-hidden="true"><span>4</span><span>6</span><span>8</span><span>10</span><span>12</span></div>
+    <div class="home-actions"><button id="cpu-start" class="primary">CPU対戦 <span>→</span></button><button id="local-start">ローカル対戦 <span>→</span></button></div>
+    <p class="footnote">45点先取 / 最大10ターン</p>
+  </section>
+  <section id="game" class="screen" hidden>
+    <header><button id="history-open" class="small">履歴</button><span class="brand">HEART BOX</span><span class="target">45点先取</span></header>
+    <div class="turn-line"><span id="turn"></span><span id="roles"></span></div>
+    <div id="scores" class="scores"></div>
+    <div class="board-area"><p id="phase-label" class="eyebrow"></p><div id="board" class="board"></div></div>
+    <div class="controls"><p id="message" role="status" aria-live="polite"></p><div id="actions" class="actions"></div></div>
+  </section>
+  <section id="result" class="screen result" hidden><p class="eyebrow">MATCH RESULT</p><h2 id="winner"></h2><div id="final-scores" class="scores"></div><p id="reason"></p><div class="result-actions"><button id="again" class="primary">もう一度</button><button id="result-history">履歴を見る</button><button id="to-home">ホームへ</button></div></section>
+</main>
+<dialog id="history-dialog" aria-labelledby="history-title"><div class="dialog-top"><h2 id="history-title">公開済みの履歴</h2><button id="history-close">← 試合に戻る</button></div><div id="history-list"></div></dialog>
+<dialog id="handoff-dialog" aria-labelledby="handoff-title"><p class="eyebrow">PLAYER CHANGE</p><h2 id="handoff-title"></h2><p id="handoff-text"></p><button id="handoff-ok" class="primary"></button></dialog>
+<script type="module" src="./js/main.js"></script>
+</body></html>
