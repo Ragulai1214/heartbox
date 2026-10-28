@@ -44,9 +44,18 @@ Node.js v24.11.1で `node --test` を実行。9テスト成功、失敗0。
 
 画像: `docs/screenshots/mobile.png`
 
+## GitHub Pagesでの確認
+
+2026-10-28に `https://ragulai1214.github.io/heartbox/` で確認。
+
+- 公開元は `main` の `/`。GitHub APIでビルド成功を確認。
+- アプリ内ブラウザでCPU対戦を17攻撃進め、A:50、B:22で45点先取の結果を確認。
+- ブラウザエラーログ0件。
+- ホームへ戻り、ローカル対戦の交代画面から配置を開始できることを確認。
+- 検証画像: `docs/screenshots/published-result.png`
+
 ## 残っている検証
 
-- GitHub Pages上での動作確認（公開先未設定）
 - スマートフォン実機でのタップ操作と端末固有の表示
 - 人間同士のテストプレイによる読み合い、45点・10ターンの妥当性
 

@@ -21,6 +21,8 @@
 
 リポジトリ: https://github.com/Ragulai1214/heartbox
 
-GitHub Pagesでは `main` ブランチのルートを公開元にします。Pagesの公開設定と公開URLでの動作確認は別途必要です。
+公開URL: https://ragulai1214.github.io/heartbox/
+
+GitHub Pagesは `main` ブランチのルートを公開元に設定済みです。2026-10-28に公開URLでCPU対戦の決着とローカル対戦の開始を確認しました。
 
 試合の保存機能はありません。ページの再読み込みでホームに戻ります。
