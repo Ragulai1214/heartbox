@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36">
+  <defs>
+    <path id="heart" d="M18 33C14 29 2 20 2 11C2 2 13 0 18 8C23 0 34 2 34 11C34 20 22 29 18 33Z"/>
+  </defs>
+  <use href="#heart" fill="#eea1ae"/>
+  <use href="#heart" transform="translate(18 18) scale(.72) translate(-18 -18)" fill="#be3e59"/>
+</svg>

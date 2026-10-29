@@ -7,7 +7,16 @@
     <p class="eyebrow">ふたりの、読み合い。</p><h1>HEART<br><span>BOX</span><i aria-hidden="true">♥</i></h1>
     <p class="intro">ハートを狙うか。シールドを読むか。</p>
     <div class="home-boxes" aria-hidden="true"><span>4</span><span>6</span><span>8</span><span>10</span><span>12</span></div>
-    <div class="home-actions"><button id="cpu-start" class="primary">CPU対戦 <span>→</span></button><button id="local-start">ローカル対戦 <span>→</span></button></div>
+    <div class="home-actions">
+      <label for="cpu-type">対戦するCPU</label>
+      <select id="cpu-type">
+        <option value="frequency">① 全履歴の頻度解析</option>
+        <option value="random" selected>② ランダム</option>
+        <option value="high-value">④ 高得点狙い</option>
+        <option value="recent">⑤ 最近5件の頻度解析</option>
+      </select>
+      <button id="cpu-start" class="primary">CPU対戦 <span>→</span></button><button id="local-start">ローカル対戦 <span>→</span></button>
+    </div>
     <p id="match-limit" class="footnote"></p>
   </section>
   <section id="game" class="screen" hidden>

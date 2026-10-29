@@ -3,14 +3,14 @@ import { GameUI } from './ui/game.js';
 import { openHistory } from './ui/history.js';
 import { showResult } from './ui/result.js';
 import { HumanController } from './players/humanController.js';
-import { CpuRandomController } from './players/cpuRandomController.js';
+import { createCpu } from './players/cpuControllers.js';
 import { playGame } from './flow/gameFlow.js';
-let mode = 'cpu', activeUI = null, finished = null, running = false;
-async function start(nextMode) {
+let mode = 'cpu', cpuType = 'random', activeUI = null, finished = null, running = false;
+async function start(nextMode, nextCpuType = cpuType) {
   if (running) return;
-  running = true; mode = nextMode; finished = null;
+  running = true; mode = nextMode; cpuType = nextCpuType; finished = null;
   showScreen('game'); activeUI = new GameUI(mode);
-  const players = [new HumanController(activeUI), mode === 'local' ? new HumanController(activeUI) : new CpuRandomController()];
+  const players = [new HumanController(activeUI), mode === 'local' ? new HumanController(activeUI) : createCpu(cpuType)];
   try {
     finished = await playGame({ players, ui: activeUI, local: mode === 'local' });
     showResult(finished, mode);

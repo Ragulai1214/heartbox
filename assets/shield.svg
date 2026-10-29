@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 36">
+  <defs>
+    <path id="shield" d="M16 1C20 4 25 5.5 30 6V16C30 24.5 24.5 31 16 35C7.5 31 2 24.5 2 16V6C7 5.5 12 4 16 1Z"/>
+  </defs>
+  <use href="#shield" fill="#a5a8aa"/>
+  <use href="#shield" transform="translate(16 18) scale(.72) translate(-16 -18)" fill="#373b3e"/>
+</svg>

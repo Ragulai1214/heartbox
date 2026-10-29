@@ -4,6 +4,13 @@ import { emptyPlacement, placeFromButton, swapBoxes, canConfirm, placementChoice
 import { handoff } from './handoff.js';
 export const nameOf = player => player === 0 ? 'A' : 'B';
 const el = id => document.getElementById(id);
+function contentIcon(kind) {
+  const name = kind === Content.HEART ? 'heart' : 'shield';
+  const icon = document.createElement('img');
+  icon.src = new URL(`../../assets/${name}.svg`, import.meta.url).href;
+  icon.className = `content-icon ${name}-icon`; icon.alt = ''; icon.setAttribute('aria-hidden', 'true');
+  return icon;
+}
 export function drawScores(container, scores, cpu = false) {
   container.replaceChildren();
   scores.forEach((score, i) => {
@@ -18,12 +25,12 @@ export function drawBoxes(container, values, { contents = {}, selected = null, p
   for (const value of values) {
     const box = document.createElement(onSelect ? 'button' : 'div');
     box.className = `box${value === selected || value === picked ? ' selected' : ''}${value === broken ? ' broken' : ''}`;
-    const symbol = contents[value] === Content.HEART ? '♥' : contents[value] === Content.SHIELD ? '🛡' : '';
     const valueEl = document.createElement('span'); valueEl.className = 'value'; valueEl.textContent = value;
-    const symbolEl = document.createElement('span'); symbolEl.className = 'symbol'; symbolEl.textContent = symbol;
+    const symbolEl = document.createElement('span'); symbolEl.className = 'symbol';
+    if ([Content.HEART, Content.SHIELD].includes(contents[value])) symbolEl.append(contentIcon(contents[value]));
     const marker = document.createElement('span'); marker.className = 'marker'; marker.textContent = value === picked ? '▲ 攻撃' : value === selected ? '選択中' : '';
     box.append(valueEl, symbolEl, marker);
-    box.setAttribute('aria-label', `${value}点${symbol ? contents[value] === Content.HEART ? ' ハート' : ' シールド' : ''}${value === broken ? ' 破壊' : ''}`);
+    box.setAttribute('aria-label', `${value}点${contents[value] === Content.HEART ? ' ハート' : contents[value] === Content.SHIELD ? ' シールド' : ''}${value === broken ? ' 破壊' : ''}`);
     if (onSelect) { box.setAttribute('aria-pressed', String(value === selected)); box.onclick = () => onSelect(value); }
     container.append(box);
   }
@@ -63,8 +70,9 @@ export class GameUI {
           render();
         } });
         el('actions').replaceChildren();
-        for (const [kind, label] of [[Content.HEART, '♥ ハート'], [Content.SHIELD, '🛡 シールド']]) {
-          this.action(label, () => { content = kind; from = null; render(); }, { disabled: Object.values(boxes).includes(kind), active: content === kind });
+        for (const [kind, label] of [[Content.HEART, 'ハート'], [Content.SHIELD, 'シールド']]) {
+          const button = this.action(label, () => { content = kind; from = null; render(); }, { disabled: Object.values(boxes).includes(kind), active: content === kind });
+          button.classList.add('content-action'); button.prepend(contentIcon(kind));
         }
         this.action('確定', () => {
           if (settled || !canConfirm(boxes)) return;

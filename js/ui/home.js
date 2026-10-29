@@ -4,6 +4,6 @@ export function showScreen(name) {
 }
 export function bindHome(start) {
   document.getElementById('match-limit').textContent = `${TARGET_SCORE}点先取 / 最大${MAX_TURNS}ターン`;
-  document.getElementById('cpu-start').onclick = () => start('cpu');
+  document.getElementById('cpu-start').onclick = () => start('cpu', document.getElementById('cpu-type').value);
   document.getElementById('local-start').onclick = () => start('local');
 }
