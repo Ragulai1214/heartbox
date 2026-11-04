@@ -33,20 +33,13 @@ export class CpuFrequencyController extends PlayerController {
     const records = this.records(view, true);
     const hearts = estimateProbabilities(boxes, records, 'heart');
     const shields = estimateProbabilities(boxes, records, 'shield');
-    return best(boxes, box => {
-      const observed = records.filter(record => record.shield === box);
-      const others = boxes.filter(value => value !== box);
-      const loss = observed.length
-        ? observed.reduce((sum, record) => sum + record.heart, 0) / observed.length
-        : others.reduce((sum, value) => sum + value, 0) / others.length;
-      return hearts.get(box) * box - shields.get(box) * loss;
-    }, this.random);
+    return best(boxes, box => box * (hearts.get(box) - shields.get(box)), this.random);
   }
 
   async choosePlacement(view) {
     const legal = placements(view.boxesAlive);
     if (this.random() < this.exploration) return pick(legal, this.random);
     const attacks = estimateProbabilities(view.boxesAlive, this.records(view, false), 'picked');
-    return best(legal, ({ heart, shield }) => heart * (attacks.get(shield) - attacks.get(heart)), this.random);
+    return best(legal, ({ heart, shield }) => shield * attacks.get(shield) - heart * attacks.get(heart), this.random);
   }
 }

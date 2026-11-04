@@ -1,0 +1,20 @@
+{
+  "seed": 20261029,
+  "reward": { "version": "hit-box-half-terminal-7", "scoreDivisor": 2, "terminal": 7 },
+  "games": 10000,
+  "warmupGames": 1000,
+  "snapshotInterval": 1000,
+  "learningRate": 0.0003,
+  "gamma": 1.0,
+  "gaeLambda": 0.95,
+  "clip": 0.2,
+  "entropyCoefficient": 0.01,
+  "valueCoefficient": 0.5,
+  "maxGradientNorm": 0.5,
+  "batchSteps": 2048,
+  "minibatch": 256,
+  "epochs": 4,
+  "baselineEvaluationGamesPerOpponent": 500,
+  "intermediateEvaluationGamesPerOpponent": 500,
+  "finalEvaluationGamesPerOpponent": 2000
+}

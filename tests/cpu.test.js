@@ -42,7 +42,7 @@ test('frequency uses opponent placements for attack and opponent attacks for def
     const cpu = new CpuFrequencyController({ random: () => 0.5, exploration: 0 });
     const history = Array.from({ length: 20 }, () => [record(player, 10, 12, 4), record(1 - player, 4, 10, 8)]).flat();
     assert.equal(await cpu.chooseAttack(view(history, boxes, player)), 10);
-    assert.deepEqual(await cpu.choosePlacement(view(history, boxes, player)), { heart: 12, shield: 8 });
+    assert.deepEqual(await cpu.choosePlacement(view(history, boxes, player)), { heart: 4, shield: 8 });
   }
 });
 
@@ -70,11 +70,11 @@ test('probabilities correct for availability, smooth unseen boxes, and normalize
   assert.deepEqual([...estimateProbabilities(boxes, [], 'heart').values()], boxes.map(() => 0.2));
 });
 
-test('attack accounts for shield losses using the shield-associated heart value', async () => {
+test('equal heart and shield frequencies cancel at each attacked box', async () => {
   const cpu = new CpuFrequencyController({ exploration: 0, random: () => 0 });
   const input = view([record(0, 10, 12, 4), record(0, 12, 10, 4)]);
-  // Equal heart/shield frequencies: 12 gains 12 and loses 10; 10 gains 10 and loses 12.
-  assert.equal(await cpu.chooseAttack(input), 12);
+  // All boxes have zero expected score difference, including 10 and 12.
+  assert.equal(await cpu.chooseAttack(input), 4);
 });
 
 test('exploration and equal-value ties sample legal actions instead of always choosing the first', async () => {
@@ -84,7 +84,7 @@ test('exploration and equal-value ties sample legal actions instead of always ch
   assert.equal(await high.chooseAttack(view()), 12);
   const tieLow = new CpuFrequencyController({ exploration: 0, random: () => 0 });
   const tieHigh = new CpuFrequencyController({ exploration: 0, random: () => 0.999 });
-  assert.notDeepEqual(await tieLow.choosePlacement(view()), await tieHigh.choosePlacement(view()));
+  assert.notEqual(await tieLow.chooseAttack(view()), await tieHigh.chooseAttack(view()));
 });
 
 test('high-value policy has legal fallback when fewer than two high boxes remain', async () => {

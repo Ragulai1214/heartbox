@@ -10,6 +10,8 @@
 
 `node --test` でルール・進行処理・ランダム5000試合を検証します。
 
+NNの学習環境・試運転・保存再開は [training/README.md](training/README.md)、入力仕様は [docs/nn-feature-schema.md](docs/nn-feature-schema.md) を参照してください。学習用Pythonの依存関係は公開ゲームには不要です。
+
 ## 文書
 
 - `docs/requirements.md`: 推奨案を採用した確定要件

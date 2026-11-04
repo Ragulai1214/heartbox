@@ -9,8 +9,22 @@ import { CpuRandomController } from '../js/players/cpuRandomController.js';
 import { playGame } from '../js/flow/gameFlow.js';
 const attackState = (first = 0) => Object.assign(createGameState(first), { phase: Phase.ATTACK });
 const placement = { heart: 10, shield: 4 };
+test('shield gains its own box value for every placement and preserves the box', () => {
+  for (const heart of BOX_VALUES) for (const shield of BOX_VALUES.filter(box => box !== heart)) {
+    const s = attackState();
+    const record = resolveAttack(s, { heart, shield }, shield);
+    assert.equal(record.gain, shield);
+    assert.deepEqual(s.scores, [0, shield]);
+    assert.deepEqual(s.history[0].scoresAfter, [0, shield]);
+    assert.deepEqual(s.boxesAlive, BOX_VALUES);
+  }
+  const s = attackState(); s.scores[1] = 40;
+  resolveAttack(s, { heart: 12, shield: 4 }, 4);
+  assert.equal(s.result, null);
+  assert.equal(s.scores[1], 44);
+});
 test('heart, shield and empty have distinct scoring and destruction', () => {
-  for (const first of [0, 1]) for (const [picked, kind, gain, recipient, alive] of [[10, 'heart', 10, first, [4, 6, 8, 12]], [4, 'shield', 10, 1 - first, [...BOX_VALUES]], [6, 'empty', 0, -1, [4, 8, 10, 12]]]) {
+  for (const first of [0, 1]) for (const [picked, kind, gain, recipient, alive] of [[10, 'heart', 10, first, [4, 6, 8, 12]], [4, 'shield', 4, 1 - first, [...BOX_VALUES]], [6, 'empty', 0, -1, [4, 8, 10, 12]]]) {
     const s = attackState(first); const record = resolveAttack(s, placement, picked);
     assert.equal(record.kind, kind); assert.equal(record.gain, gain); assert.equal(record.gainTo, recipient);
     assert.deepEqual(s.boxesAlive, alive); assert.deepEqual(record.boxesAlive, BOX_VALUES);
@@ -35,7 +49,7 @@ test('target ends on either step, including shield scoring for defender', () => 
   for (const step of [0, 1]) for (const picked of [10, 4]) {
     const s = attackState(); s.step = step;
     const recipient = picked === 10 ? attackerOf(s) : 1 - attackerOf(s);
-    s.scores[recipient] = 40;
+    s.scores[recipient] = 44;
     resolveAttack(s, placement, picked);
     assert.equal(s.result.winner, recipient); assert.equal(s.result.reason, 'target');
     assert.equal(s.phase, Phase.REVEAL); advance(s); assert.equal(s.phase, Phase.RESULT);

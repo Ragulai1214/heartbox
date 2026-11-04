@@ -17,7 +17,7 @@ export function resolveAttack(state, placement, picked) {
   if (!state.boxesAlive.includes(picked)) throw new Error('Invalid target');
   const attacker = attackerOf(state);
   const kind = picked === placement.heart ? HitKind.HEART : picked === placement.shield ? HitKind.SHIELD : HitKind.EMPTY;
-  const gain = kind === HitKind.EMPTY ? 0 : placement.heart;
+  const gain = kind === HitKind.EMPTY ? 0 : picked;
   const gainTo = kind === HitKind.EMPTY ? -1 : kind === HitKind.HEART ? attacker : 1 - attacker;
   const boxesAlive = [...state.boxesAlive];
   if (gainTo !== -1) { state.scores[gainTo] += gain; state.reachedTurn[gainTo] = state.turn; }
