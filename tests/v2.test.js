@@ -19,11 +19,12 @@ test('constraints have exact sizes and every legal board has placements', () => 
       else {
         assert.equal(constraint.allowed.length, boxesAlive.length - 2);
         assert.equal(new Set(constraint.allowed).size, constraint.allowed.length);
-        assert.equal(constraint.target, value === 0 ? 'heart' : 'shield');
+        assert.equal(constraint.target, 'shield');
       }
       const view = { boxesAlive, constraint };
       for (const p of legalPlacements(view)) assert.doesNotThrow(() => validatePlacement(view, p));
       assert.ok(legalPlacements(view).length > 0);
+      for (const heart of boxesAlive) assert.ok(legalPlacements(view).some(p => p.heart === heart));
     }
   }
 });
@@ -59,7 +60,8 @@ test('reload and next constraint wait for confirmation, public view never leaks 
   const view = createGameView(s, 0);
   assert.ok(!('placement' in view)); view.constraint.allowed.length = 0;
   assert.equal(s.constraint.allowed.length, 3);
-  assert.throws(() => validatePlacement(s, { heart: 12, shield: 4 }), /constraint/);
+  assert.doesNotThrow(() => validatePlacement(s, { heart: 12, shield: 4 }));
+  assert.throws(() => validatePlacement(s, { heart: 4, shield: 12 }), /constraint/);
 });
 
 test('personalities use correct role history and their intended bias', async () => {
@@ -84,7 +86,7 @@ test('personalities use correct role history and their intended bias', async () 
 test('all NPCs obey every constraint and complete matches with fixed personalities (90 matches)', async () => {
   for (const type of ['greedy', 'repeater', 'chaser']) {
     const cpu = new PersonalityController(type, seeded(9));
-    for (const target of ['heart', 'shield']) for (const excluded of BOX_VALUES) {
+    for (const target of ['shield']) for (const excluded of BOX_VALUES) {
       const view = { player: 1, boxesAlive: [...BOX_VALUES], history: [], constraint: { target, allowed: BOX_VALUES.filter(b => b !== excluded).slice(0, 3) } };
       for (let i = 0; i < 20; i++) validatePlacement(view, await cpu.choosePlacement(view));
     }
