@@ -16,7 +16,7 @@ export function drawScores(container, scores, cpu = false) {
   container.replaceChildren();
   scores.forEach((score, i) => {
     const card = document.createElement('div'); card.className = 'score';
-    const label = document.createElement('span'); label.textContent = `${nameOf(i)}${cpu ? i === 0 ? ' · あなた' : ' · リブニー' : ''}`;
+    const label = document.createElement('span'); label.textContent = `${nameOf(i)}${cpu ? i === 0 ? ' · あなた' : ' · NPC' : ''}`;
     const number = document.createElement('strong'); number.textContent = score;
     card.append(label, number); container.append(card);
   });
