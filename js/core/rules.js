@@ -1,9 +1,12 @@
 import { BOX_VALUES, TARGET_SCORE, MAX_TURNS, Phase, HitKind } from './constants.js';
 import { attackerOf } from './gameState.js';
+import { allowedPlacement } from './constraints.js';
 export function validatePlacement(state, placement) {
+  if (placement && !allowedPlacement(placement, state.constraint)) throw new Error('Placement violates public constraint');
   if (!placement || placement.heart === placement.shield || !state.boxesAlive.includes(placement.heart) || !state.boxesAlive.includes(placement.shield)) throw new Error('Invalid placement');
 }
 export function evaluateResult(state) {
+  if (state.version === 2) return null;
   const winner = state.scores.findIndex(score => score >= TARGET_SCORE);
   if (winner !== -1) return { winner, reason: 'target', reachedTurn: [...state.reachedTurn] };
   if (state.turn !== MAX_TURNS || state.step !== 1) return null;

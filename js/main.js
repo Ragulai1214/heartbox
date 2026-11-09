@@ -3,17 +3,17 @@ import { GameUI } from './ui/game.js';
 import { openHistory } from './ui/history.js';
 import { showResult } from './ui/result.js';
 import { HumanController } from './players/humanController.js';
-import { createCpu } from './players/cpuControllers.js';
-import { playGame } from './flow/gameFlow.js';
-let mode = 'cpu', cpuType = 'random', activeUI = null, finished = null, running = false;
+import { PersonalityController, PERSONALITIES } from './players/personalityController.js';
+import { playMatch } from './flow/matchFlow.js';
+let mode = 'cpu', cpuType = 'greedy', activeUI = null, finished = null, running = false;
 async function start(nextMode, nextCpuType = cpuType) {
   if (running) return;
   running = true; mode = nextMode; cpuType = nextCpuType; finished = null;
   showScreen('game'); activeUI = new GameUI(mode);
-  const players = [new HumanController(activeUI), mode === 'local' ? new HumanController(activeUI) : createCpu(cpuType)];
+  const players = [new HumanController(activeUI), mode === 'local' ? new HumanController(activeUI) : new PersonalityController(cpuType)];
   try {
-    finished = await playGame({ players, ui: activeUI, local: mode === 'local' });
-    showResult(finished, mode);
+    finished = await playMatch({ players, ui: activeUI, local: mode === 'local' });
+    showResult(finished, mode, PERSONALITIES[cpuType]);
   } catch (error) {
     console.error(error); showScreen('home');
     alert('試合を続けられませんでした。ホームからやり直してください。');

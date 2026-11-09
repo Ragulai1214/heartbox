@@ -1,3 +1,4 @@
+import { constraintText } from '../core/constraints.js';
 import { Content } from '../core/constants.js';
 import { drawBoxes, nameOf } from './game.js';
 const dialog = document.getElementById('history-dialog');
@@ -9,7 +10,7 @@ export function openHistory(history, result = false) {
   if (!history.length) { const p = document.createElement('p'); p.className = 'empty-history'; p.textContent = '公開済みの履歴はありません'; list.append(p); }
   for (const record of [...history].reverse()) {
     const entry = document.createElement('article'); entry.className = 'history-entry';
-    const title = document.createElement('h3'); title.textContent = `${record.turn}ターン目 · ${record.step + 1}回目　攻:${nameOf(record.attacker)} 守:${nameOf(1 - record.attacker)}`;
+    const title = document.createElement('h3'); title.textContent = `第${record.set}セット · ${record.turn}ラウンド · ${record.step + 1}回目　攻:${nameOf(record.attacker)} 守:${nameOf(1 - record.attacker)}`;
     const board = document.createElement('div'); board.className = 'board';
     drawBoxes(board, record.boxesAlive, { contents: { [record.heart]: Content.HEART, [record.shield]: Content.SHIELD }, picked: record.picked });
     const scores = document.createElement('div'); scores.className = 'history-scores';
@@ -17,7 +18,7 @@ export function openHistory(history, result = false) {
       const span = document.createElement('span'); span.textContent = `${nameOf(i)}: ${score}`;
       if (record.gainTo === i || record.gain === 0) { const gain = document.createElement('span'); gain.className = record.gain ? 'gain' : 'zero'; gain.textContent = ` (+${record.gain})`; span.append(gain); }
       scores.append(span);
-    }); entry.append(title, board, scores); list.append(entry);
+    }); const constraint = document.createElement("p"); constraint.textContent = constraintText(record.constraint); entry.append(title, constraint, board, scores); list.append(entry);
   }
   document.body.classList.add('history-open');
   dialog.showModal();

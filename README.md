@@ -4,6 +4,8 @@
 
 ## 起動
 
+現在のブラウザ版は公開配置制約・20点／2セット先取・性格固定の3種類のNPCを使うVer.2検証版です。ルールと検証手順は [docs/prototype-v2.md](docs/prototype-v2.md) を参照してください。NN開発は中止しています。
+
 プロジェクト直下で `python -m http.server 8000` を実行し、`http://localhost:8000` を開きます。ビルドや外部ライブラリのインストールは不要です。ES Modulesを使うため、HTMLを直接開かずHTTP経由で利用してください。
 
 ## テスト

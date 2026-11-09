@@ -1,4 +1,5 @@
-import { Content, MAX_TURNS } from '../core/constants.js';
+import { constraintText } from '../core/constraints.js';
+import { Content } from '../core/constants.js';
 import { attackerOf } from '../core/gameState.js';
 import { emptyPlacement, placeFromButton, swapBoxes, canConfirm, placementChoice } from '../core/placement.js';
 import { handoff } from './handoff.js';
@@ -15,7 +16,7 @@ export function drawScores(container, scores, cpu = false) {
   container.replaceChildren();
   scores.forEach((score, i) => {
     const card = document.createElement('div'); card.className = 'score';
-    const label = document.createElement('span'); label.textContent = `${nameOf(i)}${cpu ? i === 0 ? ' · あなた' : ' · CPU' : ''}`;
+    const label = document.createElement('span'); label.textContent = `${nameOf(i)}${cpu ? i === 0 ? ' · あなた' : ' · リブニー' : ''}`;
     const number = document.createElement('strong'); number.textContent = score;
     card.append(label, number); container.append(card);
   });
@@ -39,7 +40,9 @@ export class GameUI {
   constructor(mode) { this.mode = mode; this.state = null; }
   status(state) {
     this.state = state;
-    el('turn').textContent = `${state.turn} / ${MAX_TURNS} ターン目 · ${state.step + 1}回目`;
+    el('turn').textContent = `第${state.set}セット · ${state.turn}ラウンド · ${state.step + 1}回目`;
+    el('set-status').textContent = `獲得セット A ${state.sets[0]} : ${state.sets[1]} B`;
+    el('constraint').textContent = constraintText(state.constraint);
     const attacker = attackerOf(state);
     el('roles').textContent = `攻：${nameOf(attacker)}　守：${nameOf(1 - attacker)}`;
     drawScores(el('scores'), state.scores, this.mode === 'cpu');
@@ -57,6 +60,8 @@ export class GameUI {
   }
   choosePlacement(view) {
     const boxes = emptyPlacement(view.boxesAlive);
+    const permitted = candidate => !view.constraint || Object.entries(candidate).every(([box, kind]) =>
+      kind !== (view.constraint.target === 'heart' ? Content.HEART : Content.SHIELD) || view.constraint.allowed.includes(Number(box)));
     let content = null, from = null, settled = false;
     el('phase-label').textContent = 'DEFEND / 配置';
     return new Promise(resolve => {
@@ -64,20 +69,30 @@ export class GameUI {
         el('message').textContent = from !== null ? '移動先を選んでください。中身があれば交換します。' : `${nameOf(view.player)}さん、ハートとシールドを配置してください`;
         drawBoxes(el('board'), view.boxesAlive, { contents: boxes, selected: from, onSelect: value => {
           if (settled) return;
-          if (content !== null) { if (placeFromButton(boxes, content, value)) content = null; }
-          else if (from !== null) { swapBoxes(boxes, from, value); from = null; }
+          if (content !== null) {
+            const trial = { ...boxes };
+            if (placeFromButton(trial, content, value) && permitted(trial)) { Object.assign(boxes, trial); content = null; }
+          }
+          else if (from !== null) { const trial = { ...boxes }; swapBoxes(trial, from, value); if (permitted(trial)) Object.assign(boxes, trial); from = null; }
           else if (boxes[value] !== Content.NONE) from = value;
           render();
         } });
+        for (const button of el('board').children) {
+          const value = Number(button.querySelector('.value').textContent);
+          const trial = { ...boxes };
+          const possible = content !== null ? placeFromButton(trial, content, value)
+            : from !== null ? swapBoxes(trial, from, value) : true;
+          button.disabled = !possible || !permitted(trial);
+        }
         el('actions').replaceChildren();
         for (const [kind, label] of [[Content.HEART, 'ハート'], [Content.SHIELD, 'シールド']]) {
           const button = this.action(label, () => { content = kind; from = null; render(); }, { disabled: Object.values(boxes).includes(kind), active: content === kind });
           button.classList.add('content-action'); button.prepend(contentIcon(kind));
         }
         this.action('確定', () => {
-          if (settled || !canConfirm(boxes)) return;
+          if (settled || (!canConfirm(boxes) || !permitted(boxes))) return;
           settled = true; const choice = placementChoice(boxes); this.conceal(this.state); resolve(choice);
-        }, { disabled: !canConfirm(boxes), primary: true });
+        }, { disabled: (!canConfirm(boxes) || !permitted(boxes)), primary: true });
       };
       render();
     });
@@ -101,9 +116,10 @@ export class GameUI {
     el('phase-label').textContent = 'REVEAL / 公開';
     drawBoxes(el('board'), record.boxesAlive, { contents: { [record.heart]: Content.HEART, [record.shield]: Content.SHIELD }, picked: record.picked, broken: record.kind === 'shield' ? null : record.picked });
     el('message').textContent = record.kind === 'empty' ? '空箱　得点なし' : `${record.kind === 'heart' ? 'ハート命中' : 'シールド発動'}　${nameOf(record.gainTo)} +${record.gain}`;
+    if (this.state.setResult) el('message').textContent += ` ／ ${nameOf(this.state.setResult.winner)}が第${this.state.set}セット獲得`;
     el('actions').replaceChildren();
     return new Promise(resolve => {
-      const button = this.action('次へ', () => { button.disabled = true; button.onclick = null; resolve(); }, { primary: true });
+      const button = this.action(this.state.result ? 'マッチ結果へ' : this.state.setResult ? '次のセットへ' : '次へ', () => { button.disabled = true; button.onclick = null; resolve(); }, { primary: true });
     });
   }
 }
